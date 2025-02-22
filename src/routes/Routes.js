@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const multer = require("multer")
-const { createuser ,OtpVerification, LogInUser  , updateApi, } = require("../controller/usercontroller.js")
+const { createuser ,OtpVerification,Resendotp, LogInUser  , updateApi, } = require("../controller/usercontroller.js")
 const {creatadmin , getApI, Loginadmin, deleteuserapi} = require("../controller/admincontroller.js")
 const {Createshopkeeper , Loginshopkeeper} = require("../controller/Shopkeepercontoller.js")
 const upload = multer({ storage: multer.diskStorage({}), });
@@ -16,6 +16,7 @@ router.post('/createuser',upload.single("profileImg"),Validation, createuser)
 router.post('/OtpVerification/:userId',upload.single(), OtpVerification)
 router.post('/LogInUser',upload.single(), LogInUser)
 router.put('/updateApi/:userid',upload.single() , authenticate , Authorisation, updateApi)
+router.get('/Resendotp/:userId',Resendotp)
 
 
 // admin apis
@@ -23,7 +24,7 @@ router.post('/creatadmin',upload.single(), creatadmin)
 router.get('/getalluserdata', adminAuthenticate  , getApI)
 router.post('/Loginadmin',upload.single(), Loginadmin)
 
-// Shopkeeper apis
+// Shopkeeper apis             
 router.post('/Createshopkeeper', upload.single() , Createshopkeeper)
 router.post('/Shopkeeperlogin',upload.single(),Loginshopkeeper)
 router.delete('/deleteUserApi/:userid',adminAuthenticate,adminAuthorisation,deleteuserapi)

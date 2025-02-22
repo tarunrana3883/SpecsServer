@@ -81,6 +81,21 @@ exports.OtpVerification = async (req, res) => {
       return res.status(500).json({ success: false, msg: 'Internal server error.' });
     }
   };
+  exports.Resendotp = async (req, res) => {
+    try {
+      const { userId } = req.params;
+      console.log(userId)
+      let randomOtp = Math.floor(1000 + Math.random() * 9000);
+
+     const Finduser = await userModel.findByIdAndUpdate({_id:userId},{$set:{OtpVerification:randomOtp}},{new:true})
+
+     if(!Finduser) return res.status(400).send({status:false,msg:"user not found"})
+  
+      return res.status(200).json({ success: true, msg: 'OTP successfully send.' });
+    } catch (err) {
+      return res.status(500).json({ success: false, msg: 'Internal server error.' });
+    }
+  };
   
 exports.getApI = async (req, res) => {
     try {
@@ -127,6 +142,7 @@ exports.LogInUser = async (req, res) => {
     }
     catch (err) { return errorhandling(err, res) }
 }
+
 
 exports.updateApi = async (req, res) => {
     try {

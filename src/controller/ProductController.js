@@ -1,13 +1,5 @@
 const productmodel = require("../model/productModel")
-require('dotenv').config()
-const cloudinary = require ('cloudinary').v2;
-
-cloudinary.config({
-    cloud_name: process.env.cloudname,
-    api_key : process.env.APIkey,
-    api_secret : process.env.APiSecret
-    
-});
+const {CreateURL} = require('../ImageUploader/ImageURL')
 
 
 exports.createproduct = async (req, res) => {
@@ -15,11 +7,11 @@ exports.createproduct = async (req, res) => {
         
         const data = req.body;
         const ImageData = req.file;
-        if(ImageData == undefined){ return res.status(400).send({ status:false , msg:"provide Image first!" })
-        }
-        const result= await cloudinary.uploader.upload(ImageData.path)
-        data.ProductImg = result.secure_url;
+        const productimgurl= await CreateURL(ImageData.path)
+        data.ProductImg = productimgurl;
         
+        console.log(productimgurl)
+
         const productData = await productmodel.create(data);
         return res.status(201).send({ status: true, message: "Product data created sucessfully!", data: productData })
 
