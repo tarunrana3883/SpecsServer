@@ -1,5 +1,4 @@
 const { errorhandling } = require('../Errorhandling/errorhandling.js')
-const nodemailer = require("nodemailer")
 const userModel = require('../model/Usermodel.js')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -72,7 +71,8 @@ exports.OtpVerification = async (req, res) => {
       if (user.OtpVerification !== otp) {
         return res.status(400).json({ success: false, msg: 'Incorrect OTP.' });
       }
-  
+      
+      
       user.isOTPVerified = true;
       await user.save();
   
@@ -81,6 +81,8 @@ exports.OtpVerification = async (req, res) => {
       return res.status(500).json({ success: false, msg: 'Internal server error.' });
     }
   };
+
+
   exports.Resendotp = async (req, res) => {
     try {
       const { userId } = req.params;
@@ -122,7 +124,6 @@ exports.LogInUser = async (req, res) => {
 
 
         const checkMailId = await userModel.findOne({ userName: userName, isOTPVerified: true })
-
         if (!checkMailId) { return res.status(404).send({ status: false, msg: "plz login or Verify Otp" }) }
         let checkpass = await bcrypt.compare(password.trim(), checkMailId.password)
         if (!checkpass) return res.status(400).send({ Staus: false, msg: "Wrong Password", data: checkpass })
