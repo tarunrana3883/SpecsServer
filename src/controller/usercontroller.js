@@ -78,7 +78,7 @@ exports.OtpVerification = async (req, res) => {
   
       return res.status(200).json({ success: true, msg: 'OTP successfully verified. Please log in.' });
     } catch (err) {
-      return res.status(500).json({ success: false, msg: 'Internal server error.' });
+      return res.status(500).json({ success: false, msg: err.message });
     }
   };
 
@@ -138,7 +138,7 @@ exports.LogInUser = async (req, res) => {
             { expiresIn: '12h' }
         )
 
-        return res.status(200).send({ status: true, token, id })
+        return res.status(200).send({ status: true, token, id, profileImg: checkMailId.profileImg })
 
     }
     catch (err) { return errorhandling(err, res) }

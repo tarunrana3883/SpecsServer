@@ -59,6 +59,10 @@ exports.Createshopkeeper = async (req, res) => {
 
 exports.GetShopkkperData = async (req, res) => {
     try {
+        const id = req.params.ShopkeeperId
+
+        if(!id) return res.status(400).send({ status: false, msg: "plz provide ShopkeeperId" })
+
         const data = await userModel.findById(req.params.ShopkeeperId).select({ profileImg: 1, name: 1, shopkeeperdescription: 1 })
 
         return res.status(200).send({ status: true, data: data })
@@ -77,25 +81,25 @@ exports.Loginshopkeeper = async (req, res) => {
         const checkMailId = await shopkeepmodel.findOne({ userName: userName })
 
         if (!checkMailId) { return res.status(404).send({ status: false, msg: "plz SignUp Account First" }) }
-        if (checkMailId) { 
-            if(!checkMailId.isOTPVerified) return res.status(400).send({ status: false, msg: "Your Account is Block" })
-            if(checkMailId.isdeleted) return res.status(400).send({ status: false, msg: "Your Account is Deleted" })
-            if(!checkMailId.isOTPVerified) return res.status(400).send({ status: false, msg: "Otp Verification Pending",id: checkMailId._id})
+        if (checkMailId) {
+            if (!checkMailId.isOTPVerified) return res.status(400).send({ status: false, msg: "Otp Verification Pending", id: checkMailId._id })
+            if (checkMailId.isdeleted) return res.status(400).send({ status: false, msg: "Your Account is Deleted" })
+            if (!checkMailId.isOTPVerified) return res.status(400).send({ status: false, msg: "Otp Verification Pending", id: checkMailId._id })
 
-        let checkpass = await bcrypt.compare(password.trim(), checkMailId.password)
-        if (!checkpass) return res.status(400).send({ Staus: false, msg: "Wrong Password", data: checkpass })
+            let checkpass = await bcrypt.compare(password.trim(), checkMailId.password)
+            if (!checkpass) return res.status(400).send({ Staus: false, msg: "Wrong Password", data: checkpass })
 
-        let id = checkMailId._id
+            let id = checkMailId._id
+ 
+            let token = jwt.sign({
+                UserId: id,
+                AuthorName: 'Tarun'
+            },
+                process.env.AshopkeeperAcessSecretkey,
+                { expiresIn: '12h' }
+            )
 
-        let token = jwt.sign({
-            UserId: id,
-            AuthorName: 'Tarun'
-        },
-            process.env.AshopkeeperAcessSecretkey,
-            { expiresIn: '12h' }
-        )
-
-        return res.status(200).send({ status: true, token, id })
+            return res.status(200).send({ status: true, token, id, profileImg: checkMailId.profileImg })
 
         }
 

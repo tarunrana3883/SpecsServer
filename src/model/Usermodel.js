@@ -14,9 +14,6 @@ const userSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: false },
     shopkeeperdescription: { type: String, trim: true },
 
-    
-
-
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema)

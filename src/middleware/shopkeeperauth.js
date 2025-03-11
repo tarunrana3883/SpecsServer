@@ -4,6 +4,7 @@ require("dotenv").config()
 exports.ShopkeepAuthenticate = (req, res, next) => {
     try {
         let token = req.headers["x-api-key"]
+
         if (!token) { return res.status(400).send({ status: false, msg: "invalid token" }) }
 
         let decodetoken = jwt.verify(token, process.env.AshopkeeperAcessSecretkey)
